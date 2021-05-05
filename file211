@@ -1,0 +1,143 @@
+method A::::::::::::::
+
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    
+    
+    
+     ListNode* mergeboth(ListNode* first,ListNode* second)
+    {
+        ListNode* ans=NULL;
+        
+        if(!first)
+        {
+            return second;
+        }
+        else if(!second)
+        {
+            return first;
+        }
+        
+        if(first->val<=second->val)
+        {
+            ans=first;
+            ans->next=mergeboth(first->next,second);
+        }
+        else
+        {
+            ans=second;
+            ans->next=mergeboth(first,second->next);
+            
+        }
+        return ans;
+        
+        
+        
+    }
+    
+    
+   void  findmiddle(ListNode* curr,ListNode** first,ListNode** second)
+    {
+        ListNode* fast;
+        ListNode* slow;
+        slow=curr;
+        fast=curr->next;
+        while(fast&&fast->next)
+        {
+            slow=slow->next;
+            fast=fast->next->next;
+        }
+        *first=curr;
+        *second=slow->next;
+        slow->next=NULL;
+    }
+    
+    
+    void mergesorting(ListNode** head)
+    {
+        ListNode* cur=*head;
+        ListNode* first;
+        ListNode* second;
+        
+        if(!cur||cur->next)
+        {
+            return;
+        }
+        
+        findmiddle(cur,&first,&second);
+        
+        mergesorting(&first);
+        mergesorting(&second);
+        
+        *head=mergeboth(first,second);
+
+    }
+    
+    
+    
+     ListNode* sortList(ListNode* head) 
+     {
+         mergesorting(&head);
+         return head;
+        
+    }
+    
+};
+
+
+
+
+
+method B:::::::::::::::::::
+
+
+ListNode *merge_two(ListNode *first,ListNode *second)
+    {
+        if(!first)
+        {
+            return second;
+        }
+        if(!second)
+        {
+            return first;
+        }
+        if(first->val>second->val)
+        {
+            return merge_two(second,first);
+        }
+        first->next=merge_two(first->next,second);
+        return first;
+    }
+    ListNode* sortList(ListNode* head)
+    {
+        if(!head || !head->next)
+        {
+            return head;
+        }
+        ListNode *slow=head,*fast=head,*tmp=head;
+        while(slow && fast && fast->next)
+        {
+            slow=slow->next;
+            fast=fast->next->next;
+        }
+        while(tmp && tmp->next && tmp->next!=slow)
+        {
+            tmp=tmp->next;
+        }
+        tmp->next=NULL;
+        ListNode *first=sortList(head);
+        ListNode *second=sortList(slow);
+        ListNode *ans=merge_two(first,second);
+        return ans;
+    }
